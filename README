@@ -1,0 +1,14 @@
+Use Node.js to create a web console to a serial device connected to the server.
+
+Uses node-serial
+
+Status:
+Can talk to a serial device, but the listener fails to continuously listen.
+
+Todo:
+Create web console
+Get continnuous listiing to serial device to occur
+Get interactive question/answer interface going
+Add Arduino test sketchs to project
+
+
