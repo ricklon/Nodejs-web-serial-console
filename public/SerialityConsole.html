@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Seriality Serial Console</title>
+<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.custom.css" rel="stylesheet" />	
+<link href="css/rgb.css" type="text/css" rel="stylesheet"/>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript">
+	var serial;
+      
+	function loop () {
+		var line = "";
+		 		while (serial.available()) {
+		 			line = serial.readLine() + "\n";
+		 			$("#console").val(	$("#console").val() + line);
+		 		}
+	}
+	
+	function sendData() {
+		serial.write($(this).text() + "\n");
+      	console.log("Serial available: " + serial.available() );
+	}
+        
+	$(function(){
+      		serial = (document.getElementById("seriality")).Seriality();
+      		serial.begin("/dev/tty.usbmodemfa141", 9600);
+      		
+      		$("#send").bind("click", function () {sendData();});
+      		$("#input").bind("keyup", function(event) {
+      			if (event.keyCode == '13') {
+      				sendData();
+      			}
+      		});
+      setInterval(loop, 150);     		
+	});
+
+</script>
+</head>
+<body>
+  <object type="application/Seriality" id="seriality" width="0" height="0"></object>
+<div class="consoleapp">
+
+<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+<span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
+Serial console for seriality
+</p>
+
+
+<input id="input" size="50" /> <button id="send">Send</button>
+<br>
+<textarea id="console" rows="15" cols="50" ></textarea>
+
+
+
+</div>
+
+<div class="consoleapp-description" style="clear:left;">
+
+<p>Watch what comes out. Enter what goes in.
+</p>
+
+</div>
+</body>
+</html>

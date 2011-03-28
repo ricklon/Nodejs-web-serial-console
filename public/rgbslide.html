@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>Mix Calibrated RGB Colors</title>
+<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.custom.css" rel="stylesheet" />	
+<link href="css/rgb.css" type="text/css" rel="stylesheet"/>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript">
+      var serial;
+      var r, g, b;
+      var start = "";
+      var maxs = {};
+
+
+	function updateRGB(r, g, b) {
+		if (serial.available()) {
+			var rgbstring = r + "," + g + "," + b;
+			console.log("RGB vals: " + rgbstring);
+			serial.write(rgbstring);	
+		}
+	}
+
+        function refreshSwatch() {       
+        var red = $("#red").slider("value")
+                        ,green = $("#green").slider("value")
+                        ,blue = $("#blue").slider("value");
+        $("#swatch").css("background-color", "rgb(" + red + "," +  green + "," + blue + ")");
+		updateRGB(red, green, blue);
+        }
+        
+         $(document).ready(function() {
+      		serial = (document.getElementById("seriality")).Seriality();
+      		serial.begin("/dev/tty.usbmodemfa141", 9600);
+      		while (serial.available() > 0) {
+      			start = serial.readLine();
+      			if (start === "Start") {
+      				console.log("Device: " + start);
+         		}	
+      			maxs = serial.readLine();
+      			console.log("max data: "  + maxs);
+      		}
+      		
+      		
+      		$("#red, #green, #blue").slider({
+                        orientation: 'horizontal',
+                        range: "min",
+                        max: 255,
+                        value: 127,
+                        slide: refreshSwatch,
+                        change: refreshSwatch
+                });
+                $("#red").slider("value", 20);
+                $("#green").slider("value", 140);
+                $("#blue").slider("value", 60);
+        });
+
+</script>
+</head>
+<body>
+  <object type="application/Seriality" id="seriality" width="0" height="0"></object>
+<div class="testapp">
+
+<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+<span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
+Calibrate RGB Sliders for Arduino
+</p>
+
+<div id="start">Device Off</div>
+<div>Red Max: </div>
+<div>Green Max:</div>
+<div>Blue Max:</div>
+
+<div id="red"></div>
+<div id="green"></div>
+<div id="blue"></div>
+
+<div id="swatch" class="ui-widget-content ui-corner-all"></div>
+
+</div>
+
+<div class="testapp-description" style="clear:left;">
+
+<p>Display the RGB Max, and slide jquery sliders to mix the color. This uses Seriality API and is based on the jQuery RGB slider example.
+</p>
+
+</div>
+</body>
+</html>
